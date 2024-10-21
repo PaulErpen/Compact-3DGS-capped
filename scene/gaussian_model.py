@@ -256,7 +256,7 @@ class GaussianModel:
         normals = np.zeros_like(xyz)
 
         means3D = self._xyz
-        dir_pp = (means3D - torch.tensor([0, 0, 0]).repeat(means3D.shape[0], 1))
+        dir_pp = (means3D - torch.tensor([0, 0, 0], device="cuda").repeat(means3D.shape[0], 1))
         dir_pp = dir_pp/dir_pp.norm(dim=1, keepdim=True)
         shs = self.mlp_head(torch.cat([self._feature, self.direction_encoding(dir_pp)], dim=-1)).unsqueeze(1)
 
