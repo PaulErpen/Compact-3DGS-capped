@@ -275,6 +275,7 @@ class GaussianModel:
         dtype_full.insert(6, ('f_dc_0', 'f4'))
         dtype_full.insert(7, ('f_dc_1', 'f4'))
         dtype_full.insert(8, ('f_dc_2', 'f4'))
+        print(dtype_full)
 
         elements = np.empty(xyz.shape[0], dtype=dtype_full)
         attributes = np.concatenate((xyz, normals, f_dc, opacities, scale, rotation), axis=1)
