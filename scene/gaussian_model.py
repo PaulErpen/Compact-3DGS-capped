@@ -249,6 +249,32 @@ class GaussianModel:
         el = PlyElement.describe(elements, 'vertex')
         PlyData([el]).write(path)
 
+    def save_full_ply(self, path):
+        mkdir_p(os.path.dirname(path))
+
+        xyz = self._xyz.detach().cpu().numpy()
+        normals = np.zeros_like(xyz)
+
+        means3D = self._xyz
+        dir_pp = (means3D - torch.tensor([0, 0, 0]).repeat(means3D.shape[0], 1))
+        dir_pp = dir_pp/dir_pp.norm(dim=1, keepdim=True)
+        shs = self.mlp_head(torch.cat([self._feature, self.direction_encoding(dir_pp)], dim=-1)).unsqueeze(1)
+
+        f_dc = shs[..., 0:3].detach().cpu().numpy()
+
+        opacities = self._opacity.detach().cpu().numpy()
+        scale = self._scaling.detach().cpu().numpy()
+        rotation = self._rotation.detach().cpu().numpy()
+
+        dtype_full = [(attribute, 'f4') for attribute in self.construct_list_of_attributes()]
+
+        elements = np.empty(xyz.shape[0], dtype=dtype_full)
+        attributes = np.concatenate((xyz, normals, f_dc, opacities, scale, rotation), axis=1)
+        elements[:] = list(map(tuple, attributes))
+        el = PlyElement.describe(elements, 'vertex')
+        PlyData([el]).write(path)
+
+
     def save_npz(self, path):
         mkdir_p(os.path.dirname(path))
 

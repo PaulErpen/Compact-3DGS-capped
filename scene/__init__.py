@@ -83,7 +83,7 @@ class Scene:
         else:
             self.gaussians.create_from_pcd(scene_info.point_cloud, self.cameras_extent)
 
-    def save(self, iteration, compress=False, store=False):
+    def save(self, iteration, compress=False, store=False, save_full_ply=True):
         point_cloud_path = os.path.join(self.model_path, "point_cloud/iteration_{}".format(iteration))
         if store:
             if compress:
@@ -93,6 +93,8 @@ class Scene:
         else:
             self.gaussians.save_ply(os.path.join(point_cloud_path, "point_cloud.ply"))
             torch.save(torch.nn.ModuleList([self.gaussians.recolor, self.gaussians.mlp_head]).state_dict(), os.path.join(point_cloud_path, "point_cloud.pth")) 
+        if save_full_ply:
+            self.gaussians.save_full_ply(os.path.join(point_cloud_path, "point_cloud_full.ply"))
 
     def getTrainCameras(self, scale=1.0):
         return self.train_cameras[scale]
