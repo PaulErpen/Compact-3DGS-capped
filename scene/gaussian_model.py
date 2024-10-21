@@ -260,7 +260,7 @@ class GaussianModel:
         dir_pp = dir_pp/dir_pp.norm(dim=1, keepdim=True)
         shs = self.mlp_head(torch.cat([self._feature, self.direction_encoding(dir_pp)], dim=-1)).unsqueeze(1)
 
-        f_dc = shs[..., 0:3].detach().cpu().numpy()
+        f_dc = shs[..., 0:3].detach().cpu().squeeze().numpy()
 
         print(f"SHS: {shs.shape}")
         print(f"F_DC: {f_dc.shape}")
