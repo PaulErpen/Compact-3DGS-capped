@@ -262,11 +262,19 @@ class GaussianModel:
 
         f_dc = shs[..., 0:3].detach().cpu().numpy()
 
+        print(f"SHS: {shs.shape}")
+        print(f"F_DC: {f_dc.shape}")
+        print(f"XYZ: {xyz.shape}")
+
         opacities = self._opacity.detach().cpu().numpy()
         scale = self._scaling.detach().cpu().numpy()
         rotation = self._rotation.detach().cpu().numpy()
 
         dtype_full = [(attribute, 'f4') for attribute in self.construct_list_of_attributes()]
+        # insert the color attribute
+        dtype_full.insert(6, ('f_dc_0', 'f4'))
+        dtype_full.insert(7, ('f_dc_1', 'f4'))
+        dtype_full.insert(8, ('f_dc_2', 'f4'))
 
         elements = np.empty(xyz.shape[0], dtype=dtype_full)
         attributes = np.concatenate((xyz, normals, f_dc, opacities, scale, rotation), axis=1)
